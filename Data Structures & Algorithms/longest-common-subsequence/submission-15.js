@@ -1,0 +1,19 @@
+class Solution {
+    /**
+     * @param {string} text1
+     * @param {string} text2
+     * @return {number}
+     */
+    longestCommonSubsequence(text1, text2) {
+        const dp = Array.from({ length: text1.length + 1 }, () =>
+            new Array(text2.length + 1).fill(-1),
+        );
+        const dfs = (i, j) => {
+            if (i === text1.length || j === text2.length) return 0;
+            if (dp[i][j] !== -1) return dp[i][j];
+            if (text1[i] === text2[j]) return (dp[i][j] = 1 + dfs(i + 1, j + 1));
+            return (dp[i][j] = Math.max(dfs(i + 1, j), dfs(i, j + 1)));
+        };
+        return dfs(0, 0);
+    }
+}
