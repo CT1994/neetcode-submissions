@@ -1,0 +1,71 @@
+class Node {
+    constructor(sum, L, R) {
+        this.sum = sum;
+        this.left = null;
+        this.right = null;
+        this.L = L;
+        this.R = R;
+    }
+}
+
+class SegmentTree {
+    /**
+     * @param {number[]} nums
+     */
+    constructor(nums) {
+        this.root = this.build(nums, 0, nums.length - 1);
+    }
+
+    build(nums, L, R) {
+        if (L === R) {
+            return new Node(nums[L], L, R);
+        }
+
+        const M = L + Math.floor((R - L) / 2);
+        const root = new Node(0, L, R);
+        root.left = this.build(nums, L, M);
+        root.right = this.build(nums, M + 1, R);
+        root.sum = root.left.sum + root.right.sum;
+        return root;
+    }
+
+    /**
+     * @param {number} index
+     * @param {number} val
+     */
+    update(index, val) {
+        this.updateHelper(this.root, index, val);
+    }
+
+    updateHelper(root, index, val) {
+        if (root.L === root.R) {
+            root.sum = val;
+            return;
+        }
+
+        const M = root.L + Math.floor((root.R - root.L) / 2);
+        if (index > M) {
+            this.updateHelper(root.right, index, val);
+        } else {
+            this.updateHelper(root.left, index, val);
+        }
+
+        root.sum = root.left.sum + root.right.sum;
+    }
+
+    /**
+     * @param {number} L
+     * @param {number} R
+     * @returns {number}
+     */
+    query(L, R) {
+        return this.queryHelper(this.root, L, R);
+    }
+
+    queryHelper(root, L, R) {
+        if (L <= root.L && R >= root.R) return root.sum;
+        if (L > root.R || R < root.L) return 0;
+
+        return this.queryHelper(root.left, L, R) + this.queryHelper(root.right, L, R);
+    }
+}
