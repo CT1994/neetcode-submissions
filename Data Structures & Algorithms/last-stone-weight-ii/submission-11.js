@@ -1,0 +1,20 @@
+class Solution {
+    /**
+     * @param {number[]} stones
+     * @return {number}
+     */
+    lastStoneWeightII(stones) {
+        const total = stones.reduce((a, b) => a + b, 0);
+        const half = Math.floor(total / 2);
+        const dp = Array.from({ length: stones.length }, () => new Array(half + 1).fill(-1));
+
+        const dfs = (i, sum) => {
+            if (sum >= half || i === stones.length) {
+                return Math.abs(total - sum * 2);
+            }
+            if (dp[i][sum] !== -1) return dp[i][sum];
+            return (dp[i][sum] = Math.min(dfs(i + 1, sum), dfs(i + 1, sum + stones[i])));
+        };
+        return dfs(0, 0);
+    }
+}
